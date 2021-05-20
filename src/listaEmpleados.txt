@@ -1,5 +1,1 @@
-Leonel,Messi,33333333
-Sergio,Aguero,33333334
-Javier,Mascherano,22222222
-Diego,Simeone,22222223
 Javier,Zanetti,22222225

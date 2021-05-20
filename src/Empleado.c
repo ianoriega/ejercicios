@@ -16,7 +16,7 @@ Empleado* Empleado_newParam(char* Nombre,char* Apellido,char* Dni,int idEmpleado
 {
 	Empleado* auxEmpleado = Empleado_new();
 
-	if(Empleado_setNombre(auxEmpleado,Nombre) < 0 	||
+	if(Empleado_setNombre(auxEmpleado,Nombre) < 0	||
 		Empleado_setApellido(auxEmpleado,Apellido) < 0 	||
 		Empleado_setDni(auxEmpleado,Dni) < 0 ||
 		Empleado_setId(auxEmpleado,idEmpleado) < 0)
@@ -33,6 +33,7 @@ int Empleado_delete(Empleado* this)
 	int retorno = -1;
 	if(this != NULL)
 	{
+
 		free(this);
 		retorno = 0;
 	}
@@ -127,11 +128,11 @@ int Empleado_isValidDni(char* Dni)
 
 
 int Empleado_buscarIndiceVacio(Empleado* this[],int len)
-{	printf("\n1a");
+{
 	int retorno=-1;
 	int i;
 	for(i=0; i<len; i++)
-	{printf("\n1.b");
+	{
 		if(this[i]==NULL)
 		{
 			retorno =  i;
@@ -173,14 +174,14 @@ int Empleado_Alta(Empleado* this[],int len)
 	if(this!=NULL && len>=0)
 	{
 		idxVacio = Empleado_buscarIndiceVacio(this, len);
-		auxId = Empleado_idRandom(this, len, 1000, 9999);
-		utn_getCadena(auxNombre, 50, "\nIngrese Nombre", "Error");
-		utn_getCadena(auxApellido, 50, "\nIngrese Apellido","Error");
-		utn_getCadena(auxDni, 20,"\nIngrese DNI", "Error");
+		auxId = Empleado_generarId();
+		utn_getCadena(auxNombre, 50, "\nIngrese Nombre: ", "Error");
+		utn_getCadena(auxApellido, 50, "\nIngrese Apellido: ","Error");
+		utn_getCadena(auxDni, 20,"\nIngrese DNI: ", "Error");
 
 		this[idxVacio] = Empleado_newParam(auxNombre, auxApellido, auxDni, auxId);
+		printf("\nEmpleado creado");
 		retorno=0;
-
 	}
 
 	return retorno;
@@ -194,7 +195,7 @@ int Empleado_Alta(Empleado* this[],int len)
  *\param int maximo recibe el maximo del id
  *\return retorno nuevo id y -1 si no pudo validar
  */
-int Empleado_idRandom(Empleado* this[],int len, int minimo,int maximo)
+int Empleado_idRandom(Empleado* this[], int len, int minimo, int maximo)
 {
 	int retorno =-1;
 	int flagIdRepetido;
@@ -226,12 +227,8 @@ int Empleado_idRandom(Empleado* this[],int len, int minimo,int maximo)
 
 		}while(flagIdRepetido);
 
-		retorno =nuevoId;
+		retorno = nuevoId;
 
-	}
-	else
-	{
-		printf("error");
 	}
 
 	return retorno;
@@ -271,20 +268,74 @@ int Empleado_isValidId(int Id)
 
 
 
-int Empleado_imprimir(Empleado* *this,int len)
+int Empleado_imprimir(Empleado* this[],int len)
 {
 	int retorno=-1;
 	int i;
+	char* pNombre;
+	int flagNombre;
+	char* pApellido;
+	int flagApellido;
+	char* pDni;
+	int flagDni;
+	int id;
+	int flagId;
 
 	if(this!=NULL && len>=0)
 	{
-		printf("Id - Nombre - Apellido - DNI");
+		printf("\nId     Nombre       Apellido     DNI");
 		for(i=0;i<len;i++)
 		{
 			if(this[i]!=NULL)
 			{
-				printf("%d   %10s   %10s   %10s",this[i]->Id,this[i]->Nombre,this[i]->Apellido,this[i]->Dni);
+				pNombre = Empleado_getNombre(this[i], &flagNombre);
+				pApellido = Empleado_getApellido(this[i], &flagApellido);
+				pDni = Empleado_getDni(this[i], &flagDni);
+				id = Empleado_getId(this[i], &flagId);
+
+				if(!flagNombre && !flagApellido && !flagId && !flagDni)
+				{
+					printf("\n%d   %-10s   %-10s   %-10s",id,pNombre,pApellido,pDni);
+				}
+
 			}
+		}
+		retorno =0;
+	}
+
+	return retorno;
+}
+
+int Empleado_generarId(void)
+{
+	static int contador=0;
+	contador++;
+	return contador+999;
+}
+
+
+int Empleado_baja(Empleado* this[],int len)
+{
+	int retorno =-1;
+	int opcionElegida;
+	int idElegido;
+	int indexABorrar;
+
+	if(this!=NULL && len>=0)
+	{
+		utn_getNumero(&opcionElegida, 2, "\nImprimir empleados?\n[1]SI\n[2]No", "ERROr", 1, 2, 2);
+
+		if(opcionElegida ==1)
+		{
+			Empleado_imprimir(this, len);
+		}
+
+		utn_getNumero(&idElegido, 5, "\nIngrese Id a borrar", "Error", 1000, 9999, 2);
+		indexABorrar = Empleado_buscarPorId2(this, len, idElegido);
+		if(Empleado_delete(this[indexABorrar])==0)
+		{
+			this[indexABorrar]=NULL;
+			printf("\nEl empleado fue borrado");
 		}
 	}
 
@@ -293,17 +344,111 @@ int Empleado_imprimir(Empleado* *this,int len)
 
 
 
+int Empleado_buscarPorId2(Empleado* empleados[],int len, int id)
+{
+	int ret=-1;
+	int i;
+	int flagError;
+	int idItem;
+	for(i=0; i<len; i++)
+	{
+		if(empleados[i]!=NULL)
+		{
+			idItem = Empleado_getId(empleados[i],&flagError);
+			if(flagError==0)
+			{
+				if(idItem==id)
+				{
+					// Lo encontre!
+					ret = i;
+					break;
+				}
+			}
+		}
+	}
+	return ret;
+}
+
+
+int Empleado_modificacion(Empleado* this[],int len)
+{
+	int retorno=-1;
+	int opcionElegida;
+	int idModificar;
+	int indexModificar;
+	char bufferNombre[50];
+	char bufferApellido[50];
+	char bufferDni[50];
+
+	if(this!=NULL && len>=0)
+	{
+		utn_getNumero(&opcionElegida, 2, "\nImprimir empleados?\n[1]SI\n[2]No", "ERROr", 1, 2, 2);
+
+		if(opcionElegida ==1)
+		{
+			Empleado_imprimir(this, len);
+		}
+
+		utn_getNumero(&idModificar, 5, "\nIngrese Id a Modificar ", "Error", 1000, 9999, 2);
+		indexModificar = Empleado_buscarPorId2(this, len, idModificar);
+		utn_getCadena(bufferNombre, 50, "\nIngrese Nombre: ", "Error");
+		utn_getCadena(bufferApellido, 50, "\nIngrese Apellido: ", "Error");
+		utn_getCadena(bufferDni, 20, "Ingrese DNi: ","Error");
+
+		if(Empleado_setNombre(this[indexModificar],bufferNombre) ==0 &&
+		   Empleado_setApellido(this[indexModificar], bufferApellido) ==0 &&
+		   Empleado_setDni(this[indexModificar],bufferDni)==0               )
+		{
+			printf("\nEmpleado Modificado");
+		}
+		else
+		{
+			printf("\nFalla catastrofica");
+		}
+
+	}
+
+	return retorno;
+}
+
+
+int Empleado_guardar(Empleado* this[],int len)
+{
+	int retorno=-1;
+	int i;
+	char* bufferNombre;
+	int flagNom;
+	char* bufferApellido;
+	int flagApe;
+	char* bufferDni;
+	int flagDni;
+	FILE* archivo;
+
+	if(this !=NULL && len>=0)
+	{
+		for(i=0;i<len;i++)
+		{
+			if(this[i] != NULL)
+			{
+				bufferNombre = Empleado_getNombre(this[i], &flagNom);
+				bufferApellido = Empleado_getApellido(this[i], &flagApe);
+				bufferDni = Empleado_getDni(this[i], &flagDni);
+
+				if(!flagNom && !flagApe && !flagDni)
+				{
+					archivo =fopen("/home/inoriega/git/ejercicios/src/listaEmpleados.txt","w");
+					fprintf(archivo,"%s,%s,%s\n",bufferNombre,bufferApellido,bufferDni);
+					fclose(archivo);
+					printf("\nDatos guardados");
+				}
+			}
+		}
+	}
 
 
 
-
-
-
-
-
-
-
-
+	return retorno;
+}
 
 
 

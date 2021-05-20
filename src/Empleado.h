@@ -52,8 +52,16 @@ int Empleado_isValidId(int Id);
  *\param int maximo recibe el maximo del id
  *\return retorno nuevo id y -1 si no pudo validar
  */
-int Empleado_idRandom(Empleado* this[],int len, int minimo,int maximo);
+int Empleado_idRandom(Empleado* this[], int len, int minimo, int maximo);
 
-int Empleado_imprimir(Empleado* *this,int len);
+int Empleado_imprimir(Empleado* this[],int len);
+
+int Empleado_generarId(void);
+
+int Empleado_buscarPorId2(Empleado* empleados[],int len, int id);
+
+int Empleado_modificacion(Empleado* this[],int len);
+
+int Empleado_guardar(Empleado* this[],int len);
 
 #endif /* EMPLEADO_H_ */

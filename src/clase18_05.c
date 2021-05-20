@@ -27,34 +27,24 @@ int main(void)
 	char bufferNombre[256];
 	char bufferApellido[256];
 	char bufferDni[256];
-	int rS;
 	int continuar;
 	int opcionElegida;
-
-	int idxVacio;
+	int i;
+	int idxVacio=22;
 	int auxId;
 
-
-
 	Empleado_initArray(empleados, CANT_EMPLEADOS);
+	archivo =fopen("/home/inoriega/git/ejercicios/src/listaEmpleados.txt","r");
 
-	archivo =fopen("/home/inaki/eclipse-workspace/clase18_05/src/listaEmpleados.txt","r");
-
-	do
+	for(i=0;i<5;i++)
 	{
-		rS =fscanf(archivo,"%[^,],%[^,],%[^\n]\n",bufferNombre,bufferApellido,bufferDni);
-		if(rS==3)
-		{	printf("\n1");
-			idxVacio = Empleado_buscarIndiceVacio(empleados, CANT_EMPLEADOS);
-			printf("\n1.1");
-			auxId = Empleado_idRandom(empleados, CANT_EMPLEADOS, 1000, 9999);
-			printf("\n1.2");
-			empleados[idxVacio] = Empleado_newParam(bufferNombre, bufferApellido, bufferDni, auxId);
+		fscanf(archivo,"%[^,],%[^,],%[^\n]\n",bufferNombre,bufferApellido,bufferDni);
 
-		}
-
-	}while(rS==3);
-
+		idxVacio = Empleado_buscarIndiceVacio(empleados, CANT_EMPLEADOS);
+		auxId = Empleado_generarId();
+		empleados[idxVacio]= Empleado_newParam(bufferNombre, bufferApellido, bufferDni, auxId);
+	}
+	fclose(archivo);
 
 	do
 	{
@@ -68,7 +58,7 @@ int main(void)
 		printf("\n[5]Imprimir");
 		printf("\n[6]Salir");
 
-		utn_getNumero(&opcionElegida, 2, "\nIngrese: ", "Error", 1, 5, 2);
+		utn_getNumero(&opcionElegida, 2, "\nIngrese: ", "Error", 1, 6, 2);
 
 		switch(opcionElegida)
 		{
@@ -76,13 +66,13 @@ int main(void)
 				Empleado_Alta(empleados, CANT_EMPLEADOS);
 				break;
 			case 2:
-
+				Empleado_baja(empleados, CANT_EMPLEADOS);
 				break;
 			case 3:
-
+				Empleado_modificacion(empleados, CANT_EMPLEADOS);
 				break;
 			case 4:
-
+				Empleado_guardar(empleados, CANT_EMPLEADOS);
 				break;
 			case 5:
 				Empleado_imprimir(empleados, CANT_EMPLEADOS);
@@ -94,7 +84,7 @@ int main(void)
 
 	}while(continuar==1);
 
-
+	printf("Gracias por utilizar la aplicacion!!!");
 
 
 
