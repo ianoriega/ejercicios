@@ -33,7 +33,7 @@ int main(void)
 	int idxVacio=22;
 	int auxId;
 
-	Empleado_initArray(empleados, CANT_EMPLEADOS);
+	/*Empleado_initArray(empleados, CANT_EMPLEADOS);
 	archivo =fopen("/home/inoriega/git/ejercicios/src/listaEmpleados.txt","r");
 
 	for(i=0;i<5;i++)
@@ -44,7 +44,7 @@ int main(void)
 		auxId = Empleado_generarId();
 		empleados[idxVacio]= Empleado_newParam(bufferNombre, bufferApellido, bufferDni, auxId);
 	}
-	fclose(archivo);
+	fclose(archivo);*/
 
 	do
 	{

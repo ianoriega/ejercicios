@@ -426,6 +426,9 @@ int Empleado_guardar(Empleado* this[],int len)
 
 	if(this !=NULL && len>=0)
 	{
+
+		archivo =fopen("/home/inoriega/git/ejercicios/src/empleadosCargados.txt","w");
+
 		for(i=0;i<len;i++)
 		{
 			if(this[i] != NULL)
@@ -434,24 +437,60 @@ int Empleado_guardar(Empleado* this[],int len)
 				bufferApellido = Empleado_getApellido(this[i], &flagApe);
 				bufferDni = Empleado_getDni(this[i], &flagDni);
 
-				if(!flagNom && !flagApe && !flagDni)
+				if(flagNom==0 && flagApe==0 && flagDni==0)
 				{
-					archivo =fopen("/home/inoriega/git/ejercicios/src/listaEmpleados.txt","w");
+
 					fprintf(archivo,"%s,%s,%s\n",bufferNombre,bufferApellido,bufferDni);
-					fclose(archivo);
+
 					printf("\nDatos guardados");
 				}
 			}
 		}
+		fclose(archivo);
+		retorno =0;
 	}
 
 
 
 	return retorno;
 }
+/*
+int emp_dump(char nombreArchivo[],Empleado* empleados[], int len)
+{
+	// serializer
+	int ret=-1;
+	int i;
+	int flagError;
+	char* pNombre;
+	char* pApellido;
+	char* pDni;
+	int id;
+	FILE* pFile;
 
+	pFile = fopen(nombreArchivo,"w");
+	if(pFile!=NULL)
+	{
+		fprintf(pFile,"Nombre,Apellido,DNI,idEmpleado\n");
+		for(i=0; i<len; i++)
+		{
+			if(empleados[i]!=NULL)
+			{
+				// lo imprimo
+				pNombre = empleado_getNombre(empleados[i],&flagError);
+				pApellido = empleado_getApellido(empleados[i],&flagError);
+				pDni = empleado_getDni(empleados[i],&flagError);
+				id = empleado_getId(empleados[i],&flagError);
 
+				fprintf(pFile,"%s,%s,%s,%d\n",pNombre,pApellido,pDni,id);
+			}
+		}
+		fclose(pFile);
+	}
 
+	return ret;
+
+}
+*/
 
 
 
